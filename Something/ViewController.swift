@@ -11,10 +11,6 @@
     Madison Ambrogio  - Branding Lead
  
     Our mentor was Chris Gerlach
- 
-    Firebase Google Login
-    Username: newmediarapp@gmail.com
-    Password: Capstone123
 */
 
 import ARKit
