@@ -1,6 +1,5 @@
 /*
     ViewController.swift
-    Something
  
     This iOS application was created for the New Media Institute during Capstone Fall 2018 by the following members:
  
