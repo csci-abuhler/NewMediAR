@@ -13,10 +13,8 @@
 */
 
 import ARKit
-import CoreLocation
 import Firebase
 import FirebaseDatabase
-import MapKit
 import SceneKit
 import UIKit
 import AVFoundation
