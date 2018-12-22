@@ -21,7 +21,7 @@ import SceneKit
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, ARSCNViewDelegate, CLLocationManagerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class ViewController: UIViewController, ARSCNViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
     // Anchor node for the other nodes to be added to
     var anchorNode = SCNNode()
@@ -32,9 +32,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, CLLocationManagerDele
     
     // Textfield for the user to enter text
     @IBOutlet weak var input: UITextField!
-    
-    // Keeps track of the user's latitude and longitude
-    var locationManager = CLLocationManager()
     
     // The x coordinate for the side menu
     @IBOutlet weak var menuX: NSLayoutConstraint!
@@ -50,10 +47,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, CLLocationManagerDele
     
     // The reference of the database
     var reference:DatabaseReference!
-    
-    // GPS coordinates
-    var latitude: Double = 0.0
-    var longitude: Double = 0.0
     
     // In app function when the button is pressed to show the website
     @IBAction func showWebsite(_ sender: Any) {
@@ -88,21 +81,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, CLLocationManagerDele
         // Hides the keyboard when screen is tapped away from keyboard
         hideKeyboardWhenTappedAround()
         
-        // Check user's location
-        self.locationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
-        } // if
-        
         // Set the delegates
         sceneView.delegate = self
         input.delegate = self
         colorPicker.delegate = (self as UIPickerViewDelegate)
         colorPicker.dataSource = self
-
-        
+    
         // Run the session with test info and origin displayed.
         //runTests()
     } // view did load
