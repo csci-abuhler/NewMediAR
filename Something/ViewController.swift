@@ -143,27 +143,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, UITextFieldDelegate, 
         let textNode = SCNNode()
         var writing = SCNText()
         
+        // get the user's touch of the screen
         guard let touch = touches.first else { return }
         let result = sceneView.hitTest(touch.location(in: sceneView), types: [ARHitTestResult.ResultType.featurePoint])
         guard let hitResult = result.last else {return}
         let hitTransform = SCNMatrix4.init(hitResult.worldTransform)
         let hitVector = SCNVector3Make(hitTransform.m41, hitTransform.m42, hitTransform.m43)
         
+        // save the x, y, and z coordinates to variables
         touchX = hitTransform.m41
         touchY = hitTransform.m42
         touchZ = hitTransform.m43
         
+        // create the text from the user's input
         writing = SCNText(string: input.text, extrusionDepth: 1)
         
+        // adds color to the text
         let material = SCNMaterial()
         material.isDoubleSided = true
         material.diffuse.contents = colorDictionary[colorName[colorPicker.selectedRow(inComponent: 0)]]
-        
         writing.materials = [material]
         
+        // sets the text size
         textNode.scale = SCNVector3(textSizeSlider.value, textSizeSlider.value, textSizeSlider.value)
         textNode.geometry = writing
+        
+        // next line lets the text always face the user's view
         textNode.constraints = [SCNBillboardConstraint()]
+        
+        // place the text where the user touched
         textNode.position = hitVector
         sceneView.scene.rootNode.addChildNode(textNode)
         
@@ -174,7 +182,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UITextFieldDelegate, 
         child.updateChildValues(values)
     } // override func
    
-    // Add text from Firebase to the scene
+    // Add text from Firebase to the scene. Most of the code from the below function is similar to the previous function
     func placeNode(x: Float, y: Float, z: Float, text: String, size: Float, color: Float) -> Void {
         let textNode = SCNNode()
         var writing = SCNText()
@@ -198,13 +206,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, UITextFieldDelegate, 
         textNode.constraints = [SCNBillboardConstraint()]
         textNode.position = hitVector
         sceneView.scene.rootNode.addChildNode(textNode)
-    } // func
-    
-    // Gives the longitude and latitude
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let localValue: CLLocationCoordinate2D = manager.location!.coordinate
-        latitude = localValue.latitude
-        longitude = localValue.longitude
     } // func
     
     // Sets up the configuration for the code scan
@@ -260,7 +261,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UITextFieldDelegate, 
         print("The session has ended! D:")
     } // session interrupted
     
-    // Checks if enter is pressed
+    // Checks if enter is pressed and lowers the keyboard to out of view if pressed
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("return pressed")
         input.resignFirstResponder()
@@ -288,18 +289,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, UITextFieldDelegate, 
                 frame.origin.y = 20
                 self.input.frame = frame
                 self.input.layoutIfNeeded()
-            })
+            }) // animate
         } // dispatch
         
+        // compares the scanned image to the saved image
         guard let imageAnchor = anchor as? ARImageAnchor else { return }
         let referenceImage = imageAnchor.referenceImage
         
+        // change the world origin to the image
         sceneView.session.setWorldOrigin(relativeTransform: imageAnchor.transform)
         
+        // adds a node that gives a welcome message onto the image
         let nodeGeometry = SCNText(string: "Welcome!", extrusionDepth: 1)
         nodeGeometry.font = UIFont(name: "Helvetica", size: 30)
         nodeGeometry.firstMaterial?.diffuse.contents = UIColor.black
-        
         anchorNode.geometry = nodeGeometry
         anchorNode.scale = SCNVector3(0.1, 0.1, 0.1)
         anchorNode.constraints = [SCNBillboardConstraint()]
